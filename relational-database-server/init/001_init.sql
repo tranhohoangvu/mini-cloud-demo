@@ -8,3 +8,4 @@ CREATE TABLE IF NOT EXISTS notes(
 );
 
 INSERT INTO notes(title) VALUES ('Hello from MariaDB!');
+ 
