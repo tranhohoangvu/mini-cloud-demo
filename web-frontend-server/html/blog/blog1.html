@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hành trình bắt đầu học lập trình web</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    body {
+      background: #020617;
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #020617;
+    }
+    header {
+      margin-bottom: 24px;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #a5b4fc;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 6px;
+    }
+    .meta {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-bottom: 18px;
+    }
+    .hero-img {
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.8);
+    }
+    .hero-img img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      max-height: 360px;
+    }
+    article {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 18px;
+      padding: 22px 20px 20px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: 0 22px 46px rgba(15, 23, 42, 0.8);
+    }
+    article p {
+      margin-bottom: 14px;
+      font-size: 0.98rem;
+      line-height: 1.7;
+      color: #e5e7eb;
+    }
+    article h2 {
+      margin: 18px 0 10px;
+      font-size: 1.2rem;
+      color: #bfdbfe;
+    }
+    .back {
+      margin-top: 22px;
+      text-align: center;
+    }
+    .back a {
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid #38bdf8;
+      color: #e0f2fe;
+      font-size: 0.9rem;
+      transition: background 0.2s ease, color 0.2s ease,
+                  transform 0.2s ease;
+    }
+    .back a:hover {
+      background: #38bdf8;
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge">Công nghệ</span>
+      <h1>Hành trình bắt đầu học lập trình web</h1>
+      <p class="meta">Đăng ngày 14/11/2025 · Tuấn Đạt</p>
+
+      <div class="hero-img">
+        <img src="https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg"
+             alt="Màn hình code và laptop" />
+      </div>
+    </header>
+
+    <article>
+      <p>
+        Mình bắt đầu học lập trình web từ một lý do rất đơn giản: muốn tự tay
+        làm một trang web “nhìn cho được” để giới thiệu bản thân và những dự án
+        nhỏ mình đã làm. Lúc mới tìm hiểu, mọi thứ đều khá mơ hồ: HTML là gì,
+        CSS để làm gì, JavaScript có cần học ngay không?
+      </p>
+
+      <h2>Bắt đầu với những viên gạch đầu tiên</h2>
+      <p>
+        Mình chọn học HTML và CSS trước. HTML giống như bộ khung xương của
+        trang web, còn CSS giúp “trang điểm” cho khung xương đó trở nên đẹp và
+        dễ nhìn hơn. Chỉ cần vài thẻ cơ bản như
+        <code>&lt;h1&gt;</code>, <code>&lt;p&gt;</code>,
+        <code>&lt;a&gt;</code>, mình đã có thể tạo ra những trang đơn giản
+        nhưng chạy được trên trình duyệt.
+      </p>
+      <p>
+        Cảm giác gõ vài dòng code rồi F5 và thấy kết quả thay đổi ngay trên
+        màn hình thật sự rất “phê”. Nó cho mình động lực để tiếp tục đọc thêm
+        tài liệu và thử nghiệm nhiều layout khác nhau.
+      </p>
+
+      <h2>Những khó khăn ban đầu</h2>
+      <p>
+        Khó khăn lớn nhất với mình không phải là cú pháp, mà là sự kiên nhẫn.
+        Nhiều lúc chỉnh CSS hoài mà giao diện vẫn không như ý, hay chỉ vì quên
+        dấu <code>;</code> mà cả file không hoạt động. Có những hôm ngồi fix
+        giao diện đến khuya, nhưng đổi lại mình hiểu sâu hơn về cách trình
+        duyệt “suy nghĩ”.
+      </p>
+
+      <h2>Điều mình học được</h2>
+      <p>
+        Quan trọng nhất là: đừng chờ hiểu hết rồi mới bắt đầu làm. Cứ bắt tay
+        vào một project nhỏ, ví dụ như trang blog cá nhân này. Trong quá trình
+        làm, mình buộc phải tìm tài liệu, đọc thêm, hỏi bạn bè – và đó chính
+        là cách kiến thức bám lại lâu nhất.
+      </p>
+      <p>
+        Chặng đường phía trước còn dài: responsive, JavaScript, framework,
+        backend… nhưng việc có một trang web nhỏ chạy đúng theo ý mình đã là
+        một khởi đầu rất đáng nhớ.
+      </p>
+    </article>
+
+    <div class="back">
+      <a href="/blog/blog.html">← Quay lại danh sách bài viết</a>
+    </div>
+  </div>
+</body>
+</html>
