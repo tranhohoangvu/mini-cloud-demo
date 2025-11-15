@@ -2,9 +2,10 @@ from flask import Flask, jsonify, request
 import time
 import os
 import requests
+import json
 from jose import jwt
 
-# URL ISSUER của Keycloak (có thể override bằng biến môi trường)
+# ISSUER của Keycloak (có thể override bằng biến môi trường)
 ISSUER = os.getenv(
     "OIDC_ISSUER",
     "http://authentication-identity-server:8080/realms/master"
@@ -61,6 +62,17 @@ def secure():
         return jsonify(error=str(e)), 401
 
 
+@app.get("/student")
+def student():
+    """EXT 2: trả danh sách sinh viên từ students.json"""
+    try:
+        with open("students.json", encoding="utf-8") as f:
+            data = json.load(f)
+        return jsonify(data)
+    except Exception as e:
+        # để nếu lỡ thiếu file / lỗi JSON thì biết lý do
+        return jsonify(error=str(e)), 500
+
+
 if __name__ == "__main__":
-    # app listen trên 0.0.0.0:8081 cho Docker map port
     app.run(host="0.0.0.0", port=8081)
