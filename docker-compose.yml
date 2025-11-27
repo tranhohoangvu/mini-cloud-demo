@@ -7,7 +7,7 @@ networks:
 services:
   web-frontend-server:
     build: ./web-frontend-server
-    image: hotensv/web:dev
+    image: tranhohoangvu/web:dev
     container_name: web-frontend-server
     networks:
       - cloud-net
@@ -16,7 +16,7 @@ services:
 
   application-backend-server:
     build: ./application-backend-server
-    image: hotensv/app:dev
+    image: tranhohoangvu/app:dev
     container_name: application-backend-server
     networks:
       - cloud-net
