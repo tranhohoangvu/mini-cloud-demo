@@ -79,7 +79,7 @@ tranhohoangvuminiclouddemo/
 ├─ relational-database-server/
 │  └─ init/
 │     ├─ 001_init.sql         (DB minicloud + bảng notes)
-│     └─ 002_studentdb.sql    (DB studentdb + bảng students)
+│     └─ 002_init.sql    (DB studentdb + bảng students)
 ├─ authentication-identity-server/
 ├─ object-storage-server/
 │  └─ data/                   (volume MinIO)
