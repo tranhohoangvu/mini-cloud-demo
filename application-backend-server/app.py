@@ -48,12 +48,13 @@ def secure():
 
     try:
         payload = jwt.decode(
-            token,
-            get_jwks(),
-            algorithms=["RS256"],
-            audience=AUDIENCE,
-            issuer=ISSUER,
-        )
+        token,
+        get_jwks(),
+        algorithms=["RS256"],
+        audience=AUDIENCE,
+        options={"verify_iss": False},
+    )
+
         return jsonify(
             message="Secure resource OK",
             preferred_username=payload.get("preferred_username"),
