@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Blog Cá Nhân – Học lập trình & Cuộc sống</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #e5e7eb;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #9ca3af;
+      font-size: 0.95rem;
+    }
+
+    .post-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .post-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.6);
+      transition: transform 0.2s ease, box-shadow 0.2s ease,
+                  border-color 0.2s ease;
+    }
+
+    .post-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.9);
+      border-color: #38bdf8;
+    }
+
+    .post-image {
+      height: 160px;
+      overflow: hidden;
+    }
+
+    .post-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .post-content {
+      padding: 16px 18px 18px;
+    }
+
+    .post-meta {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #a5b4fc;
+      margin-bottom: 6px;
+    }
+
+    .post-title {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+    }
+
+    .post-excerpt {
+      font-size: 0.9rem;
+      color: #cbd5f5;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .post-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .post-footer a {
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #38bdf8;
+      color: #e0f2fe;
+      font-size: 0.8rem;
+      transition: background 0.2s ease, color 0.2s ease,
+                  transform 0.2s ease;
+    }
+
+    .post-footer a:hover {
+      background: #38bdf8;
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    footer a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Blog</h1>
+      <p>Chia sẻ về học lập trình, công nghệ và cuộc sống sinh viên.</p>
+    </header>
+
+    <section class="post-list">
+      <!-- Bài viết 1 -->
+      <article class="post-card">
+        <div class="post-image">
+          <img src="https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg"
+               alt="Laptop và code" />
+        </div>
+        <div class="post-content">
+          <div class="post-meta">CÔNG NGHỆ · 14/11/2025</div>
+          <h2 class="post-title">Hành trình bắt đầu học lập trình web</h2>
+          <p class="post-excerpt">
+            Tại sao mình chọn lập trình web, cần chuẩn bị gì, và những bài học
+            đầu tiên sau vài tháng “vật lộn” với HTML, CSS, JavaScript.
+          </p>
+          <div class="post-footer">
+            <span>~ 5 phút đọc</span>
+            <a href="/blog/blog1.html">Đọc tiếp</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Bài viết 2 -->
+      <article class="post-card">
+        <div class="post-image">
+          <img src="https://images.pexels.com/photos/3808029/pexels-photo-3808029.jpeg"
+               alt="Sinh viên học tập" />
+        </div>
+        <div class="post-content">
+          <div class="post-meta">HỌC TẬP · 14/11/2025</div>
+          <h2 class="post-title">3 thói quen giúp mình học tập hiệu quả hơn</h2>
+          <p class="post-excerpt">
+            Một vài thay đổi nhỏ trong cách ghi chép, quản lý thời gian và ôn tập
+            đã giúp điểm số của mình ổn định hơn rất nhiều.
+          </p>
+          <div class="post-footer">
+            <span>~ 4 phút đọc</span>
+            <a href="/blog/blog2.html">Đọc tiếp</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Bài viết 3 -->
+      <article class="post-card">
+        <div class="post-image">
+          <img src="https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg"
+               alt="Thành phố về đêm" />
+        </div>
+        <div class="post-content">
+          <div class="post-meta">CUỘC SỐNG · 14/11/2025</div>
+          <h2 class="post-title">Một ngày “chill” của sinh viên IT</h2>
+          <p class="post-excerpt">
+            Không chỉ có bug và deadline, đôi khi sinh viên IT cũng cần một ngày
+            chậm lại để nạp năng lượng.
+          </p>
+          <div class="post-footer">
+            <span>~ 3 phút đọc</span>
+            <a href="/blog/blog3.html">Đọc tiếp</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 · Blog cá nhân của Tuấn Đạt, Tiến Đạt, Hoàng Vũ ·
+        <a href="/">Về trang Home</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

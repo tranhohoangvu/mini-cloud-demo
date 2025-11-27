@@ -14,6 +14,24 @@ services:
     ports:
       - "8080:80"
 
+  web-frontend-server-1:
+    build: ./web-frontend-server-1
+    image: tranhohoangvu/web-1:dev
+    container_name: web-frontend-server-1
+    networks:
+      - cloud-net
+    # ports:
+    #   - "8081:80"
+
+  web-frontend-server-2:
+    build: ./web-frontend-server-2
+    image: tranhohoangvu/web-2:dev
+    container_name: web-frontend-server-2
+    networks:
+      - cloud-net
+    # ports:
+    #   - "8082:80"
+
   application-backend-server:
     build: ./application-backend-server
     image: tranhohoangvu/app:dev
