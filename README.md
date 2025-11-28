@@ -213,7 +213,7 @@ docker run -it --rm --network cloud-net mysql:8   sh -c 'mysql -h relational-dat
 
 **DB 2 – `studentdb` + bảng `students`:**
 
-Trong script `002_studentdb.sql`:
+Trong script `002_init.sql`:
 
 - Tạo DB `studentdb`
 - Tạo bảng `students(id, student_id, fullname, dob, major, …)`
