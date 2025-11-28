@@ -1,0 +1,24 @@
+$TTL 3600
+
+@   IN SOA  ns.cloud.local. admin.cloud.local. (
+        1       ; Serial
+        7200    ; Refresh
+        3600    ; Retry
+        1209600 ; Expire
+        3600    ; Minimum TTL
+)
+
+    IN NS   ns.cloud.local.
+
+; Name server
+ns  IN A    10.10.10.2
+
+; Web frontend trong đề yêu cầu có bản ghi nội bộ
+; Có thể giữ 10.10.10.10 giống tài liệu lab
+; hoặc sửa thành IP thật của container web sau này.
+web-frontend-server    IN A 10.10.10.10
+
+
+app-backend     IN A 10.10.10.20
+minio           IN A 10.10.10.30
+keycloak        IN A 10.10.10.40

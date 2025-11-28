@@ -1,0 +1,12 @@
+. {
+    log
+    errors
+
+    # Zone nội bộ cloud.local đọc từ file db.cloud.local
+    file /etc/coredns/zones/db.cloud.local cloud.local {
+        reload 5s
+    }
+
+    # Các domain khác (google.com, github.com, ...) forward ra ngoài
+    forward . 8.8.8.8 1.1.1.1
+}
