@@ -261,17 +261,6 @@ http://localhost:8081/realms/52200214/account
 Trong PowerShell/cmd, dùng lệnh:
 
 ```powershell
-curl.exe -X POST "http://localhost:8081/realms/52200214/protocol/openid-connect/token" ^
-  -H "Content-Type: application/x-www-form-urlencoded" ^
-  -d "client_id=flask-app" ^
-  -d "grant_type=password" ^
-  -d "username=sv01" ^
-  -d "password=sv01"
-```
-
-*(Trong file PDF/slide nhóm có thể giữ đúng syntax mà bạn đang dùng, ví dụ với backtick ` để xuống dòng trong PowerShell:)*
-
-```powershell
 curl.exe -X POST "http://localhost:8081/realms/52200214/protocol/openid-connect/token" `
   -H "Content-Type: application/x-www-form-urlencoded" `
   -d "client_id=flask-app" `
