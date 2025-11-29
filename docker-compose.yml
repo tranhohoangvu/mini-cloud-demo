@@ -41,9 +41,9 @@ services:
     ports:
       - "8085:8081"
     environment:
-      OIDC_ISSUER: "http://authentication-identity-server:8080/realms/sinhvien"
+      OIDC_ISSUER: "http://authentication-identity-server:8080/realms/52200214"
       OIDC_AUDIENCE: "account"
-      OIDC_INTROSPECT_URL: "http://localhost:8081/realms/sinhvien/protocol/openid-connect/token/introspect"
+      OIDC_INTROSPECT_URL: "http://localhost:8081/realms/52200214/protocol/openid-connect/token/introspect"
       OIDC_INTROSPECT_CLIENT_ID: "backend-introspect"
       OIDC_INTROSPECT_CLIENT_SECRET: "xoVeDIeu2SPJ9Lj8y4AY36sVMNvEKbtO"
       # Chọn chế độ xác thực:
