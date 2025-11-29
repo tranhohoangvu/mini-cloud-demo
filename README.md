@@ -436,7 +436,51 @@ ping -c 3 internal-dns-server
 
 ---
 
-## 7. Ghi chú & Hướng mở rộng
+## 7. Push image tùy chỉnh lên Docker Hub
+
+Theo yêu cầu kỹ thuật chung, dự án đã push ít nhất 1 image tùy chỉnh lên Docker Hub.
+
+### 7.1. Tạo repository trên Docker Hub
+
+Quy trình tạo repository cho backend:
+
+1. Đăng nhập vào **Docker Hub**: <https://hub.docker.com/>
+2. Ở góc phải, chọn **Create Repository**.
+3. Điền thông tin:
+   - **Repository name**: `tranhohoangvu-minicloud-backend`
+   - **Visibility**: chọn **Public** (để giảng viên có thể truy cập).
+4. Nhấn **Create** để tạo repository `tranhohoangvu/tranhohoangvu-minicloud-backend`.
+
+### 7.2. Build & push image lên Docker Hub
+
+Trên máy local, tại thư mục gốc của repo, đã chạy các lệnh:
+
+```bash
+docker login
+
+docker build -t tranhohoangvu/tranhohoangvu-minicloud-backend:1.0 ./application-backend-server
+
+docker push tranhohoangvu/tranhohoangvu-minicloud-backend:1.0
+```
+
+Trong đó:
+
+- `./application-backend-server` là thư mục chứa `Dockerfile` của Flask backend.
+- Image trên Docker Hub có tên:
+  - **Repository**: `tranhohoangvu/tranhohoangvu-minicloud-backend`
+  - **Tag**: `1.0`
+
+Image này có thể được dùng lại trong các môi trường khác (ví dụ EC2) bằng cách:
+
+```bash
+docker pull tranhohoangvu/tranhohoangvu-minicloud-backend:1.0
+```
+
+*(Hiện tại `docker-compose.yml` vẫn sử dụng `build:` từ Dockerfile trong repo để dễ deploy, nhưng việc push image lên Docker Hub đã đáp ứng yêu cầu 4 của đề.)*
+
+---
+
+## 8. Ghi chú & Hướng mở rộng
 
 - Repo đã triển khai đủ 9 loại server + các extension:
   - Blog cá nhân (3 bài).
@@ -451,8 +495,13 @@ ping -c 3 internal-dns-server
   - Load balancer Round Robin 2 web server.
 
 - Có thể mở rộng thêm:
-  - Push image custom lên Docker Hub.
   - Deploy lên EC2 hoặc VPS để demo qua public IP.
   - Thêm logging stack (Loki/ELK) nếu muốn.
+
+---
+
+## 9. Author
+
+- 
 
 ---
