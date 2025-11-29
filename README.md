@@ -1,4 +1,3 @@
-
 # MyMiniCloud – Mô phỏng hệ thống Cloud cơ bản
 
 > Repo: `tranhohoangvuminiclouddemo`  
@@ -16,7 +15,7 @@ Dự án này xây dựng một “mini cloud platform” gồm các thành ph�
 - **Relational Database Server** – MariaDB với DB `minicloud` & `studentdb`.
 - **Authentication & Identity Server** – Keycloak (OIDC, realm riêng, client `flask-app`).
 - **Object Storage Server** – MinIO (bucket `profile-pics`, `documents`).
-- **Internal DNS Server** – Bind9 (zone `cloud.local`).
+- **Internal DNS Server** – CoreDNS (zone `cloud.local`).
 - **Monitoring Node Exporter** – thu thập metric.
 - **Monitoring Prometheus Server** – scrape metric từ Node Exporter & Web.
 - **Monitoring Grafana Dashboard Server** – vẽ dashboard.
@@ -52,7 +51,7 @@ Tất cả container kết nối vào `cloud-net` để mô phỏng hạ tầng 
 - MariaDB: `3306:3306`
 - Keycloak: `8081:8080`
 - MinIO: `9000:9000` (S3 API), `9001:9001` (console)
-- DNS: `1053:53/udp`
+- DNS (CoreDNS): `1053:53/udp`
 - Node Exporter: `9100:9100`
 - Prometheus: `9090:9090`
 - Grafana: `3000:3000`
@@ -72,6 +71,16 @@ tranhohoangvuminiclouddemo/
 │  │     ├─ index.html
 │  │     ├─ blog1.html, blog2.html, blog3.html
 │  └─ Dockerfile
+├─ web-frontend-server-1/
+│  ├─ html/
+│  │  └─ index.html
+│  ├─ conf.default
+│  └─ Dockerfile
+├─ web-frontend-server-2/
+│  ├─ html/
+│  │  └─ index.html
+│  ├─ conf.default
+│  └─ Dockerfile
 ├─ application-backend-server/
 │  ├─ app.py
 │  ├─ students.json
@@ -79,14 +88,14 @@ tranhohoangvuminiclouddemo/
 ├─ relational-database-server/
 │  └─ init/
 │     ├─ 001_init.sql         (DB minicloud + bảng notes)
-│     └─ 002_init.sql    (DB studentdb + bảng students)
+│     └─ 002_init.sql         (DB studentdb + bảng students)
 ├─ authentication-identity-server/
 ├─ object-storage-server/
 │  └─ data/                   (volume MinIO)
 ├─ internal-dns-server/
-│  ├─ named.conf.options
-│  ├─ named.conf.local
-│  └─ db.cloud.local
+│  ├─ Corefile
+│  └─ zones/
+│     └─ db.cloud.local
 ├─ monitoring-prometheus-server/
 │  └─ prometheus.yml
 ├─ monitoring-grafana-dashboard-server/
@@ -100,10 +109,10 @@ tranhohoangvuminiclouddemo/
 
 ### 4.1. Yêu cầu
 
-- Docker & Docker Compose đã cài trên máy.
-- RAM tối thiểu ~4GB để chạy full stack.
+- Docker & Docker Compose cài trên máy.
+- Port: `80`, `8080`, `8081`, `3306`, `9000`, `9001`, `9090`, `9100`, `3000`, `1053/udp` chưa bị chiếm.
 
-### 4.2. Build & Start
+### 4.2. Khởi động toàn bộ hệ thống
 
 Từ thư mục gốc repo:
 
@@ -121,9 +130,13 @@ docker compose ps
 Nếu muốn chạy từng service trong quá trình dev:
 
 ```bash
-docker compose up -d web-frontend-server
-docker compose up -d application-backend-server
-# ...
+docker compose up -d web-frontend-server application-backend-server api-gateway-proxy-server
+```
+
+Dừng hệ thống:
+
+```bash
+docker compose down
 ```
 
 ---
@@ -132,33 +145,38 @@ docker compose up -d application-backend-server
 
 ### 5.1. Web Frontend Server (Nginx static site)
 
-**Mục đích:** phục vụ web tĩnh (Home + Blog).
+**Mục đích:** kiểm tra web tĩnh + blog cá nhân.
 
-- Truy cập trình duyệt:
-  - Home: <http://localhost:8080/>
-  - Blog: <http://localhost:8080/blog/>
-- Hoặc dùng `curl`:
+- Truy cập Home:
 
 ```bash
 curl -I http://localhost:8080/
-curl -I http://localhost:8080/blog/
+# hoặc mở trình duyệt: http://localhost:8080/
 ```
 
 **Kỳ vọng:**
 
-- HTTP 200 OK
-- Home hiển thị: `MyMiniCloud – Home`
-- Blog hiển thị: `MyMiniCloud – Blog`
+- HTTP `200 OK`
+- Trang hiển thị tiêu đề "MyMiniCloud – Home" và link sang Blog.
 
-**Extension Blog cá nhân (/blog):** thêm `blog1.html`, `blog2.html`, `blog3.html` với nội dung & ảnh minh họa, link về trang chủ.
+- Truy cập Blog:
+
+```bash
+curl -I http://localhost:8080/blog/
+# hoặc http://localhost:8080/blog/
+```
+
+**Kỳ vọng:**
+
+- Trang blog list, có link tới 3 bài `blog1.html`, `blog2.html`, `blog3.html`.
 
 ---
 
 ### 5.2. Application Backend Server (Flask API)
 
-**Mục đích:** microservice REST API.
+**Mục đích:** kiểm tra API backend hoạt động & proxy từ API Gateway.
 
-- Trực tiếp (không qua gateway):
+- Gọi trực tiếp:
 
 ```bash
 curl http://localhost:8085/hello
@@ -173,37 +191,40 @@ curl http://localhost/api/hello
 **Kỳ vọng:**
 
 ```json
-{ "message": "Hello from App Server!" }
+{"message":"Hello from App Server!"}
 ```
 
-**Endpoint `/student`:**
+**Route `/student` (EXT 2 + EXT 9):**
 
-- `GET /student`
-- Đọc dữ liệu từ `students.json` (ít nhất 5 sinh viên: id, name, major, gpa).
-
-Test:
+- Trực tiếp:
 
 ```bash
 curl http://localhost:8085/student
-curl http://localhost/student/     # qua API Gateway
 ```
 
-**Endpoint `/secure`:**
+- Qua Gateway:
 
-- `GET /secure` nhận Bearer token (OIDC – Keycloak).
-- Token hợp lệ → trả `message: "Secure resource OK"` + `preferred_username`.
-- Token thiếu/invalid → HTTP 401.
+```bash
+curl http://localhost/student/
+```
+
+**Kỳ vọng:** trả về JSON danh sách sinh viên đọc từ `students.json`.
+
+**Route `/secure` (OIDC với Keycloak):**
+
+- Khi có token hợp lệ (lấy từ Keycloak) → `/secure` trả thông tin user.
+- Khi thiếu/invalid token → HTTP `401` với thông báo lỗi.
 
 ---
 
 ### 5.3. Relational Database Server (MariaDB)
 
-**Mục đích:** mô phỏng RDS, auto-init schema/data.
+**Mục đích:** kiểm tra dữ liệu khởi tạo tự động trong container DB.
 
-**DB 1 – `minicloud` + bảng `notes`:**
+#### 5.3.1. Lệnh kiểm tra bắt buộc – DB `minicloud`
 
 ```bash
-docker run -it --rm --network cloud-net mysql:8   sh -c 'mysql -h relational-database-server -uroot -proot -D minicloud   -e "SHOW TABLES; SELECT * FROM notes;"'
+docker run -it --rm --network cloud-net mysql:8   sh -c 'mysql -h relational-database-server -uroot -proot -D minicloud -e "SHOW TABLES; SELECT * FROM notes;"'
 ```
 
 **Kỳ vọng:**
@@ -211,46 +232,74 @@ docker run -it --rm --network cloud-net mysql:8   sh -c 'mysql -h relational-dat
 - Có bảng `notes`
 - Có bản ghi `"Hello from MariaDB!"`
 
-**DB 2 – `studentdb` + bảng `students`:**
-
-Trong script `002_init.sql`:
-
-- Tạo DB `studentdb`
-- Tạo bảng `students(id, student_id, fullname, dob, major, …)`
-- Insert ≥ 3 bản ghi.
-
-Test:
+#### 5.3.2. Lệnh kiểm tra mở rộng – DB `studentdb`
 
 ```bash
-docker run -it --rm --network cloud-net mysql:8   sh -c 'mysql -h relational-database-server -uroot -proot   -e "SHOW DATABASES; USE studentdb; SHOW TABLES; SELECT * FROM students;"'
+docker run -it --rm --network cloud-net mysql:8   sh -c 'mysql -h relational-database-server -uroot -proot -D studentdb -e "SHOW TABLES; SELECT * FROM students;"'
 ```
+
+**Kỳ vọng:** có ít nhất 3 bản ghi sinh viên trong bảng `students`.
 
 ---
 
 ### 5.4. Authentication Identity Server (Keycloak)
 
-**Mục đích:** IdP phát hành token, quản lý user/realm/client.
+**Mục đích:** kiểm tra dịch vụ đăng nhập OIDC hoạt động và tích hợp với Flask `/secure`.
 
-- Truy cập: <http://localhost:8081>
-- Đăng nhập admin:
+#### 5.4.1. Truy cập trang tài khoản người dùng
 
-  - Username: `admin`
-  - Password: `admin`
+Mở trình duyệt:
 
-**Realm & client:**
+```text
+http://localhost:8081/realms/52200214/account
+```
 
-- Tạo realm theo MSSV (vd: `minicloud-52200214`).
-- Tạo user: `sv01`, `sv02`.
-- Tạo client `flask-app` (public).
-- Lấy token và gọi `/secure` ở backend.
+Đăng nhập bằng user (ví dụ `sv01`) để kiểm tra realm hoạt động.
+
+#### 5.4.2. Lấy Access Token bằng `curl.exe` (Windows)
+
+Trong PowerShell/cmd, dùng lệnh:
+
+```powershell
+curl.exe -X POST "http://localhost:8081/realms/52200214/protocol/openid-connect/token" ^
+  -H "Content-Type: application/x-www-form-urlencoded" ^
+  -d "client_id=flask-app" ^
+  -d "grant_type=password" ^
+  -d "username=sv01" ^
+  -d "password=sv01"
+```
+
+*(Trong file PDF/slide nhóm có thể giữ đúng syntax mà bạn đang dùng, ví dụ với backtick ` để xuống dòng trong PowerShell:)*
+
+```powershell
+curl.exe -X POST "http://localhost:8081/realms/52200214/protocol/openid-connect/token" `
+  -H "Content-Type: application/x-www-form-urlencoded" `
+  -d "client_id=flask-app" `
+  -d "grant_type=password" `
+  -d "username=sv01" `
+  -d "password=sv01"
+```
+
+Kết quả trả về JSON chứa trường `access_token`. Copy giá trị này và gán vào `<ACCESS_TOKEN_MOI>`.
+
+#### 5.4.3. Gọi API `/secure` của Flask với Bearer Token
+
+```powershell
+curl.exe "http://localhost:8085/secure" -H "Authorization: Bearer <ACCESS_TOKEN_MOI>"
+```
+
+**Kỳ vọng:**
+
+- Nếu token hợp lệ → trả JSON thông tin user (sub, preferred_username, …).
+- Nếu token sai/hết hạn → HTTP `401`.
 
 ---
 
 ### 5.5. Object Storage Server (MinIO)
 
-**Mục đích:** mô phỏng S3 cho lưu trữ object.
+**Mục đích:** kiểm tra lưu trữ đối tượng kiểu S3.
 
-- Truy cập console: <http://localhost:9001>
+- Mở console: <http://localhost:9001>
 - Đăng nhập: `minioadmin / minioadmin`
 
 **Buckets gợi ý:**
@@ -260,33 +309,37 @@ docker run -it --rm --network cloud-net mysql:8   sh -c 'mysql -h relational-dat
 
 ---
 
-### 5.6. Internal DNS Server (Bind9)
+### 5.6. Internal DNS Server (CoreDNS)
 
-**Mục đích:** phân giải tên miền nội bộ `*.cloud.local`.
+**Mục đích:** phân giải tên miền nội bộ `*.cloud.local` bằng CoreDNS.  
+Cấu hình:
 
-- Truy vấn từ host:
+- `internal-dns-server/Corefile` – load zone `cloud.local` từ thư mục `zones/`.
+- `internal-dns-server/zones/db.cloud.local` – file zone chứa các bản ghi A nội bộ, ví dụ:
+  - `web-frontend-server    IN A 10.10.10.10`
+  - `app-backend            IN A 10.10.10.20`
+  - `minio                  IN A 10.10.10.30`
+  - `keycloak               IN A 10.10.10.40`
 
-```bash
-dig @127.0.0.1 -p 1053 web-frontend-server.cloud.local +short
-```
+#### 5.6.1. Lệnh kiểm tra bắt buộc
 
-**Kỳ vọng:** trả về IP nội bộ tương ứng.
-
-**Gợi ý thêm bản ghi:**
-
-Thêm các bản ghi trong `db.cloud.local`:
-
-- `app-backend.cloud.local`
-- `minio.cloud.local`
-- `keycloak.cloud.local`
-
-Test:
+Dùng container `busybox` để `nslookup` qua mạng `cloud-net`:
 
 ```bash
-dig @127.0.0.1 -p 1053 app-backend.cloud.local +short
-dig @127.0.01 -p 1053 minio.cloud.local +short
-dig @127.0.01 -p 1053 keycloak.cloud.local +short
+docker run --rm --network cloud-net busybox nslookup web-frontend-server.cloud.local internal-dns-server
 ```
+
+**Kỳ vọng:** phân giải được `web-frontend-server.cloud.local` về đúng IP trong `db.cloud.local`.
+
+#### 5.6.2. Lệnh kiểm tra mở rộng
+
+```bash
+docker run --rm --network cloud-net busybox nslookup app-backend.cloud.local internal-dns-server
+docker run --rm --network cloud-net busybox nslookup minio.cloud.local internal-dns-server
+docker run --rm --network cloud-net busybox nslookup keycloak.cloud.local internal-dns-server
+```
+
+**Kỳ vọng:** tất cả tên trên đều phân giải đúng IP nội bộ tương ứng.
 
 ---
 
@@ -294,113 +347,96 @@ dig @127.0.01 -p 1053 keycloak.cloud.local +short
 
 **Node Exporter:**
 
-- Container `monitoring-node-exporter-server`
+- Container: `monitoring-node-exporter-server`
 - Expose metric tại `:9100/metrics`.
 
 **Prometheus:**
 
 - Truy cập: <http://localhost:9090>
-- Status → Targets: phải thấy target `monitoring-node-exporter-server:9100` trạng thái **UP**.
+- Status → Targets: phải thấy target:
+  - `monitoring-node-exporter-server:9100` (job `node`)
+  - `web-frontend-server:80` (job `web`)
 
-Thử query:
+**Ví dụ query:**
+
+- `node_cpu_seconds_total`
+- `node_memory_MemAvailable_bytes`
+
+---
+
+### 5.8. Monitoring Grafana Dashboard
+
+**Mục đích:** trực quan hóa metric hệ thống.
+
+- Mở: <http://localhost:3000>
+- Đăng nhập: `admin / admin`
+- Add datasource Prometheus:
 
 ```text
-node_cpu_seconds_total
+URL: http://monitoring-prometheus-server:9090
 ```
 
-**Thêm job web (gợi ý):**
+- Import dashboard Node Exporter hoặc tạo dashboard:
 
-Trong `prometheus.yml`:
+Tên gợi ý: **System Health of 52200214** với ít nhất 3 panel:
 
-```yaml
-- job_name: 'web'
-  static_configs:
-    - targets: ['web-frontend-server:80']
-```
-
-Restart Prometheus, kiểm tra `/targets` thấy job `web` **UP**.
+- CPU Usage
+- Memory Usage
+- Network Traffic
 
 ---
 
-### 5.8. Monitoring: Grafana Dashboard
+### 5.9. API Gateway Proxy Server (Nginx Reverse Proxy + Load Balancer)
 
-- Truy cập: <http://localhost:3000>
-- Đăng nhập: `admin/admin`
-- Thêm datasource **Prometheus**:
-  - URL: `http://monitoring-prometheus-server:9090`
+**Mục đích:** routing hợp nhất & cân bằng tải web.
 
-**Dashboard gợi ý “System Health of <MSSV>”:**
+**Các route chính:**
 
-- Tạo dashboard mới với ít nhất 3 panel:
-  - CPU Usage (sử dụng `node_cpu_seconds_total`)
-  - Memory Usage (`node_memory_MemAvailable_bytes`, …)
-  - Network Traffic (`node_network_receive_bytes_total`, …)
-
----
-
-### 5.9. API Gateway / Reverse Proxy / Load Balancer
-
-**Mục đích:** Gateway duy nhất cho web/app/auth; route `/student/` & load balancing.
-
-Các route chính:
-
-- `/` → `web-frontend-server:80`
-- `/api/` → `application-backend-server:8081`
-- `/auth/` → `authentication-identity-server:8080`
-
-**Kiểm thử:**
+- Web (load balancer 2 web server):
 
 ```bash
-curl -I http://localhost/          # web
-curl -s  http://localhost/api/hello
-curl -I http://localhost/auth/     # redirect 302 tới Keycloak
+curl -I http://localhost/
 ```
 
-**Route `/student/`:**
+**Kỳ vọng:** trả `200 OK`, nội dung luân phiên giữa `web-frontend-server-1` và `web-frontend-server-2` khi refresh nhiều lần.
 
-```nginx
-location /student/ {
-    proxy_pass http://application-backend-server:8081/student;
-}
+- Backend:
+
+```bash
+curl http://localhost/api/hello
 ```
 
-Test:
+- Keycloak (qua gateway):
+
+```bash
+curl -I http://localhost/auth/
+```
+
+**Kỳ vọng:**
+
+- `/` → trả HTML từ web (qua upstream `web_frontend`).
+- `/api/hello` → JSON `"Hello from App Server!"`.
+- `/auth/` → HTTP 302 redirect tới trang login Keycloak.
+
+**Route `/student/` (EXT 9):**
 
 ```bash
 curl http://localhost/student/
 ```
 
-**Load Balancer (Round Robin):**
-
-- Tạo thêm 2 web server: `web-frontend-server-1`, `web-frontend-server-2` (HTML khác nhau để dễ phân biệt).
-- Trong `nginx.conf`:
-
-```nginx
-upstream web_frontend {
-    server web-frontend-server-1:80;
-    server web-frontend-server-2:80;
-}
-
-server {
-    listen 80;
-    location / {
-        proxy_pass http://web_frontend;
-    }
-    # ...
-}
-```
-
-- F5 nhiều lần `http://localhost/` → nội dung luân phiên giữa server 1 & 2.
+**Kỳ vọng:** trả danh sách sinh viên giống `/student` của Flask.
 
 ---
 
-### 5.10. Kiểm tra kết nối mạng giữa các container
+## 6. Kiểm tra thông mạng giữa các container
 
-Từ 1 container (vd: `api-gateway-proxy-server`):
+Có thể dùng ping từ 1 container bất kỳ (ví dụ từ `application-backend-server`):
 
 ```bash
+docker run -it --rm --network cloud-net alpine sh
+
+# Trong shell của container:
 ping -c 3 web-frontend-server
-ping -c 3 application-backend-server
 ping -c 3 relational-database-server
 ping -c 3 authentication-identity-server
 ping -c 3 object-storage-server
@@ -411,47 +447,23 @@ ping -c 3 internal-dns-server
 
 ---
 
-## 6. Extensions / Gợi ý mở rộng
+## 7. Ghi chú & Hướng mở rộng
 
-1. Blog cá nhân 3 bài – Web Frontend.
-2. API `/student` đọc từ `students.json`.
-3. DB `studentdb` + bảng `students`.
-4. Realm riêng + user + client `flask-app` trong Keycloak, dùng cho `/secure`.
-5. MinIO bucket `profile-pics` & `documents`.
-6. Thêm bản ghi DNS nội bộ cho app, minio, keycloak.
-7. Prometheus job giám sát web.
-8. Grafana dashboard “System Health of <MSSV>”.
-9. API Gateway route `/student/`.
-10. Load Balancer (Round Robin) giữa 2 web server.
+- Repo đã triển khai đủ 9 loại server + các extension:
+  - Blog cá nhân (3 bài).
+  - API `/student` đọc JSON.
+  - DB `studentdb.students`.
+  - Realm Keycloak + client `flask-app` + endpoint `/secure`.
+  - MinIO với avatar + tài liệu.
+  - CoreDNS zone `cloud.local` với nhiều bản ghi.
+  - Prometheus job `web`.
+  - Dashboard Grafana “System Health of 52200214”.
+  - Route `/student/` qua API Gateway.
+  - Load balancer Round Robin 2 web server.
 
----
-
-## 7. Phân công công việc (gợi ý)
-
-> Hãy ghi rõ họ tên + MSSV từng thành viên trước khi nộp.
-
-- **Infra & Monitoring (DevOps mini):**  
-  MariaDB, DNS, Node Exporter, Prometheus, một phần MinIO.
-
-- **Backend & API Gateway:**  
-  Flask app (`/hello`, `/secure`, `/student`), kết nối DB (nếu có), Nginx API Gateway, load balancer, build & push image lên Docker Hub.
-
-- **Frontend, Keycloak, MinIO & Báo cáo:**  
-  Web tĩnh + blog, Keycloak realm/client/user, MinIO buckets, Grafana dashboard, tổng hợp screenshot & viết báo cáo.
+- Có thể mở rộng thêm:
+  - Push image custom lên Docker Hub.
+  - Deploy lên EC2 hoặc VPS để demo qua public IP.
+  - Thêm logging stack (Loki/ELK) nếu muốn.
 
 ---
-
-## 8. Ghi chú khi deploy lên server (AWS EC2, VPS,…)
-
-- Mở firewall cho các port cần demo (80, 8080, 8081, 3000, 9000, 9001, 9090, 1053/udp, …).
-- Cài Docker & Docker Compose trên server.
-- Clone repo, chạy `docker compose up -d`.
-- Dùng **public IP** của server thay cho `localhost` khi truy cập từ ngoài.
-
----
-
-> 💡 Tip: Khi nộp báo cáo, hãy bổ sung:
-> - Link GitHub repo  
-> - Link Docker Hub image custom  
-> - Link video demo  
-> - Screenshot từng phần demo tương ứng với README này.
