@@ -469,6 +469,8 @@ Trong đó:
 - Image trên Docker Hub có tên:
   - **Repository**: `tranhohoangvu/tranhohoangvu-minicloud-backend`
   - **Tag**: `1.0`
+- Xem trực tiếp trên Docker Hub tại:
+  - `https://hub.docker.com/r/tranhohoangvu/tranhohoangvu-minicloud-backend`
 
 Image này có thể được dùng lại trong các môi trường khác (ví dụ EC2) bằng cách:
 
