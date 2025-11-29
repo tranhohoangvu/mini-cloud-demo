@@ -13,6 +13,7 @@ services:
       - cloud-net
     ports:
       - "8080:80"
+    restart: unless-stopped
 
   web-frontend-server-1:
     build: ./web-frontend-server-1
@@ -22,6 +23,7 @@ services:
       - cloud-net
     # ports:
     #   - "8082:80"
+    restart: unless-stopped
 
   web-frontend-server-2:
     build: ./web-frontend-server-2
@@ -31,6 +33,7 @@ services:
       - cloud-net
     # ports:
     #   - "8083:80"
+    restart: unless-stopped
 
   application-backend-server:
     build: ./application-backend-server
@@ -63,6 +66,7 @@ services:
       - "3306:3306"
     networks:
       - cloud-net
+    restart: unless-stopped
 
   authentication-identity-server:
     image: quay.io/keycloak/keycloak:latest
@@ -94,6 +98,7 @@ services:
       - "9001:9001"
     networks:
       - cloud-net
+    restart: unless-stopped
 
   # internal-dns-server:
   #   image: internetsystemsconsortium/bind9:9.18
@@ -106,6 +111,7 @@ services:
   #   - ./internal-dns-server/db.cloud.local:/etc/bind/db.cloud.local:ro
   #   networks: 
   #   - cloud-net
+  #   restart: unless-stopped
 
   internal-dns-server:
     image: coredns/coredns:latest
@@ -127,6 +133,7 @@ services:
       - "9100:9100"
     networks:
       - cloud-net
+    restart: unless-stopped
 
   monitoring-prometheus-server:
     image: prom/prometheus:latest
@@ -137,6 +144,7 @@ services:
       - ./monitoring-prometheus-server/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - cloud-net
+    restart: unless-stopped
 
   monitoring-grafana-dashboard-server:
     image: grafana/grafana:latest
@@ -145,6 +153,7 @@ services:
       - "3000:3000"
     networks:
       - cloud-net
+    restart: unless-stopped
 
   api-gateway-proxy-server:
     image: nginx:stable
