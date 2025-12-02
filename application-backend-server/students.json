@@ -1,31 +1,31 @@
 [
   {
     "id": 1,
-    "name": "Trần Hồ Hoàng Vũ",
+    "name": "Tran Ho Hoang Vu",
     "major": "Computer Science",
     "gpa": 3.8
   },
   {
     "id": 2,
-    "name": "Phạm Tuấn Đạt",
+    "name": "Pham Tuan Dat",
     "major": "Information Technology",
     "gpa": 3.6
   },
   {
     "id": 3,
-    "name": "Lê Tiến Đạt",
+    "name": "Le Tien Dat",
     "major": "Data Science",
     "gpa": 3.8
   },
   {
     "id": 4,
-    "name": "Trần Khiết Lôi",
+    "name": "Nguyen Van A",
     "major": "Software Engineering",
     "gpa": 3.6
   },
   {
     "id": 5,
-    "name": "Trần Thiệu Khang",
+    "name": "Tran Thi B",
     "major": "AI & Machine Learning",
     "gpa": 3.4
   }

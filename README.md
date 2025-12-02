@@ -274,7 +274,7 @@ Kết quả trả về JSON chứa trường `access_token`. Copy giá trị nà
 #### 5.4.3. Gọi API `/secure` của Flask với Bearer Token
 
 ```powershell
-curl.exe "http://localhost:8085/secure" -H "Authorization: Bearer <ACCESS_TOKEN_MOI>"
+curl.exe -i "http://localhost:8085/secure" -H "Authorization: Bearer <ACCESS_TOKEN_MOI>"
 ```
 
 **Kỳ vọng:**

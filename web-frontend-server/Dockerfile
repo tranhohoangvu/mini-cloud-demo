@@ -6,6 +6,7 @@ RUN rm -f /etc/nginx/conf.d/default.conf
 # Copy config + html vào container
 COPY conf.default /etc/nginx/conf.d/default.conf
 COPY html/ /usr/share/nginx/html/
+COPY metrics.txt /usr/share/nginx/html/metrics
 
 # Set quyền đọc
 RUN chmod -R 755 /usr/share/nginx/html

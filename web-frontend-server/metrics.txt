@@ -1,0 +1,7 @@
+# HELP web_requests_total Total number of requests
+# TYPE web_requests_total counter
+web_requests_total 42
+
+# HELP web_dummy_gauge Dummy gauge for demo
+# TYPE web_dummy_gauge gauge
+web_dummy_gauge 1
