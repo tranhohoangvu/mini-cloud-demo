@@ -504,6 +504,6 @@ docker pull tranhohoangvu/tranhohoangvu-minicloud-backend:1.0
 
 ## 9. Author
 
-- 
+- Trần Hồ Hoàng Vũ
 
 ---
